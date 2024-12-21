@@ -1,0 +1,195 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+}
+
+.login-container input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.login-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.login-container button:hover {
+    background-color: #45a049;
+}
+
+.keyboard {
+    display: none;
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: max-content;
+    cursor: move;
+    z-index: 1000;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.key {
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    background: #d3d3d3;
+    text-align: center;
+    line-height: 50px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.key:hover {
+    background: #b0b0b0;
+}
+
+.key:active {
+    background: #808080;
+    transform: translateY(2px);
+}
+
+.key.shift-active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.key.caps-active {
+    background-color: #2196F3;
+    color: white;
+}
+
+.space-bar {
+    width: 250px;
+}
+
+.keyboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.shift,
+.backspace,
+.enter {
+    width: 100px;
+}
+
+.capslock {
+    width: 100px;
+}
+
+.kk {
+    height: 100px;
+}
+
+.keyboard-container button {
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.keyboard-container button:hover {
+    background-color: #e0e0e0;
+}
+
+.keyboard-container button:focus {
+    outline: none;
+}
+
+.keyb {
+    /* background-color: rgb(0, 0, 0); */
+    color: white;
+    border: black;
+    /* border-radius: 50%; */
+    width: 40px;
+    height: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    line-height: 50px;
+    margin: 8px;
+}
+
+/* สไตล์สำหรับ Dropdown */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-button {
+    background-color: #4CAF50; /* สีปุ่มหลัก */
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none; /* ซ่อนเมนู */
+    position: absolute;
+    bottom: 100%; /* แสดงด้านบน */
+    left: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content button {
+    background-color: white;
+    color: black;
+    padding: 10px;
+    text-align: left;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+}
+
+.dropdown-content button:hover {
+    background-color: #ddd; /* สีเมื่อวางเมาส์ */
+}
+
+/* แสดง Dropdown เมื่อมีการ Hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}

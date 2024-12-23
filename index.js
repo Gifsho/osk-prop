@@ -26,9 +26,9 @@ mongoose
 
 // MongoDB User Schema
 const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
+  u___n___: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  p___w___: { type: String, required: true },
 });
 
 const User = mongoose.model("User", userSchema);
@@ -36,20 +36,20 @@ const User = mongoose.model("User", userSchema);
 // Register Endpoint
 app.post("/register", async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { u___n___, email, p___w___ } = req.body;
 
     // ตรวจสอบว่าผู้ใช้มีอยู่แล้วหรือไม่
-    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+    const existingUser = await User.findOne({ $or: [{ u___n___ }, { email }] });
     if (existingUser) {
       return res.status(400).json({ message: "ผู้ใช้มีอยู่แล้ว" });
     }
 
     // Salted และ Hash รหัสผ่าน
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedp___w___ = await bcrypt.hash(p___w___, saltRounds);
 
     // สร้างผู้ใช้ใหม่
-    const newUser = new User({ username, email, password: hashedPassword });
+    const newUser = new User({ u___n___, email, p___w___: hashedp___w___ });
     await newUser.save();
 
     res.status(201).json({ message: "สมัครสมาชิกสำเร็จ" });
@@ -61,17 +61,17 @@ app.post("/register", async (req, res) => {
 // Login Endpoint
 app.post("/login", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { u___n___, p___w___ } = req.body;
 
     // ตรวจสอบว่าผู้ใช้มีอยู่หรือไม่
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ u___n___ });
     if (!user) {
       return res.status(400).json({ message: "ข้อมูลการเข้าสู่ระบบไม่ถูกต้อง" });
     }
 
     // ตรวจสอบรหัสผ่าน
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
+    const ispasswordValid = await bcrypt.compare(p___w___, user.p___w___);
+    if (!ispasswordValid) {
       return res.status(400).json({ message: "ข้อมูลการเข้าสู่ระบบไม่ถูกต้อง" });
     }
 

@@ -140,16 +140,16 @@ function switchLanguage() {
 async function login(event) {
   event.preventDefault();
 
-  const ยูส__ = document.getElementById("username").value;
-  const พาส__ = document.getElementById("password").value;
+  const u___n___ = document.getElementById("u___n___").value;
+  const p___w___ = document.getElementById("p___w___").value;
 
   // เข้ารหัสข้อมูลก่อนส่งไปยังเซิร์ฟเวอร์
-  const encryptedUsername = CryptoJS.AES.encrypt(
-    ยูส__,
+  const encryptedu___n___ = CryptoJS.AES.encrypt(
+    u___n___,
     encryptionKey
   ).toString();
-  const encryptedPassword = CryptoJS.AES.encrypt(
-    พาส__,
+  const encryptedp___w___ = CryptoJS.AES.encrypt(
+    p___w___,
     encryptionKey
   ).toString();
 
@@ -159,8 +159,8 @@ async function login(event) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      username: encryptedUsername,
-      password: encryptedPassword,
+      u___n___: encryptedu___n___,
+      p___w___: encryptedp___w___,
     }),
   });
 

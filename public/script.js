@@ -5,9 +5,13 @@ let offsetX = 0,
 let isCapsLock = false;
 let isShift = false;
 let currentLanguage = "english";
+const encryptionKey = "your-encryption-key"; // กำหนดคีย์สำหรับการเข้ารหัส
 
-document.querySelectorAll("input").forEach((input) => {
-  input.addEventListener("focus", () => (activeInput = input));
+document.querySelectorAll("input, textarea, form").forEach((element) => {
+  element.addEventListener("focus", (event) => {
+    event.stopImmediatePropagation();
+    activeInput = element;
+  });
 });
 
 function toggleKeyboard() {
@@ -43,22 +47,6 @@ function toggleCapsLock() {
   const capsLockKeys = document.querySelectorAll(".capslock");
   capsLockKeys.forEach((key) => key.classList.toggle("caps-active"));
 
-  // Update key appearances
-  // document.querySelectorAll(".key").forEach((key) => {
-  //   const normalText = key.getAttribute("data-normal");
-  //   const shiftedText = key.getAttribute("data-shifted");
-
-  //   if (
-  //     (normalText && normalText.match(/[a-zA-Z]/)) ||
-  //     (shiftedText && shiftedText.match(/[a-zA-Z]/))
-  //   ) {
-  //     if (isCapsLock) {
-  //       key.innerText = (normalText || key.innerText).toUpperCase();
-  //     } else {
-  //       key.innerText = (normalText || key.innerText).toLowerCase();
-  //     }
-  //   }
-  // });
   document.querySelectorAll(".key").forEach((key) => {
     const normalText = key.getAttribute("data-normal");
     const shiftedText = key.getAttribute("data-shifted");
@@ -113,7 +101,10 @@ function startDrag(event) {
   offsetY = event.clientY - document.getElementById("keyboard").offsetTop;
 
   document.addEventListener("mousemove", drag);
-  document.addEventListener("mouseup", () => (isDragging = false));
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+    document.removeEventListener("mousemove", drag);
+  });
 }
 
 function drag(event) {
@@ -146,33 +137,44 @@ function switchLanguage() {
   engScramble.style.display = "none";
 }
 
-async function login() {
-  document.getElementById("loginForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+async function login(event) {
+  event.preventDefault();
 
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
 
-    const response = await fetch("/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
+  // เข้ารหัสข้อมูลก่อนส่งไปยังเซิร์ฟเวอร์
+  const encryptedUsername = CryptoJS.AES.encrypt(
+    username,
+    encryptionKey
+  ).toString();
+  const encryptedPassword = CryptoJS.AES.encrypt(
+    password,
+    encryptionKey
+  ).toString();
 
-    const data = await response.json();
-
-    if (data.token) {
-      alert("เข้าสู่ระบบสำเร็จ");
-      localStorage.setItem("token", data.token);
-    } else {
-      alert(data.message || "เกิดข้อผิดพลาด");
-    }
+  const response = await fetch("/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      username: encryptedUsername,
+      password: encryptedPassword,
+    }),
   });
+
+  const data = await response.json();
+
+  if (data.token) {
+    alert("เข้าสู่ระบบสำเร็จ");
+    localStorage.setItem("token", data.token);
+  } else {
+    alert(data.message || "เกิดข้อผิดพลาด");
+  }
 }
 
-function toggletap() {
+function toggletap(event) {
   const key = event.target;
   key.style.backgroundColor = "#45a049";
 
@@ -183,7 +185,7 @@ function toggletap() {
   console.log("Tap function");
 }
 
-function toggleEnter() {
+function toggleEnter(event) {
   // ตรวจสอบว่าเป็นการกดปุ่ม Enter
   if (event.key === "Enter") {
     // ป้องกันการส่งฟอร์มที่เกิดจากการกด Enter

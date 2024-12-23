@@ -248,7 +248,7 @@ function Scramble() {
 function scrambleKeys() {
   // เลือกปุ่มทั้งหมดในคีย์บอร์ด "Scrambled" ยกเว้นปุ่ม backspace
   const keys = document.querySelectorAll(
-    "#scrambled-keyboard .key:not(.backspace)"
+    "#scrambled-keyboard .key:not(.backspace):not(.plus):not(.minus):not(.multiply):not(.divide):not(.modulo):not(.double-zero):not(.decimal):not(.equals)"
   );
   const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
   shuffleArray(numbers); // เรียงลำดับตัวเลขแบบสุ่ม
@@ -257,14 +257,6 @@ function scrambleKeys() {
   keys.forEach((key, index) => {
     key.textContent = numbers[index];
   });
-}
-
-// ฟังก์ชันที่ใช้สับเปลี่ยนตัวเลข
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]]; // Swap elements
-  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {

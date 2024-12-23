@@ -162,24 +162,34 @@ document.addEventListener("DOMContentLoaded", () => {
   
               <div id="numpad-keyboard" class="keyboard-layout" style="display: none;">
                   <div class="keyboard-row">
+                      <button class="key">+</button>
+                      <button class="key">-</button>
+                      <button class="key">*</button>
+                      <button class="key">/</button>
+                  </div>
+                  <div class="keyboard-row">
                       <button class="key">1</button>
                       <button class="key">2</button>
                       <button class="key">3</button>
+                      <button class="key">%</button>
                   </div>
   
                   <div class="keyboard-row">
                       <button class="key">4</button>
                       <button class="key">5</button>
                       <button class="key">6</button>
+                      <button class="key">.</button>
                   </div>
   
                   <div class="keyboard-row">
                       <button class="key">7</button>
                       <button class="key">8</button>
                       <button class="key">9</button>
+                      <button class="key">=</button>
                   </div>
   
                   <div class="keyboard-row">
+                      <button class="key">00</button>
                       <button class="key">0</button>
                       <button class="key backspace" style="width: 110px;">Backspace</button>
                   </div>
@@ -189,24 +199,34 @@ document.addEventListener("DOMContentLoaded", () => {
               <div id="scrambled-keyboard" class="keyboard-layout" style="display: none;">
                   <!-- เพิ่มปุ่มสำหรับคีย์บอร์ด Scramble -->
                   <div class="keyboard-row">
+                      <button class="key plus">+</button>
+                      <button class="key minus">-</button>
+                      <button class="key multiply">*</button>
+                      <button class="key divide">/</button>
+                  </div>
+                  <div class="keyboard-row">
                       <button class="key">1</button>
                       <button class="key">2</button>
                       <button class="key">3</button>
+                      <button class="key modulo">%</button>
                   </div>
   
                   <div class="keyboard-row">
                       <button class="key">4</button>
                       <button class="key">5</button>
                       <button class="key">6</button>
+                      <button class="key decimal">.</button>
                   </div>
   
                   <div class="keyboard-row">
                       <button class="key">7</button>
                       <button class="key">8</button>
                       <button class="key">9</button>
+                      <button class="key equals">=</button>
                   </div>
   
                   <div class="keyboard-row">
+                      <button class="key double-zero">00</button>
                       <button class="key">0</button>
                       <button class="key backspace" style="width: 110px;">Backspace</button>
                   </div>

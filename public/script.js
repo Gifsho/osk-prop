@@ -5,7 +5,7 @@ let offsetX = 0,
 let isCapsLock = false;
 let isShift = false;
 let currentLanguage = "english";
-const encryptionKey = "your-encryption-key"; // กำหนดคีย์สำหรับการเข้ารหัส
+const encryptionKey = process.env.ENCRYPTION_KEY;
 
 document.querySelectorAll("input, textarea, form").forEach((element) => {
   element.addEventListener("focus", (event) => {

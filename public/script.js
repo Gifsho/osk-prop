@@ -5,7 +5,9 @@ let offsetX = 0,
 let isCapsLock = false;
 let isShift = false;
 let currentLanguage = "english";
+
 const encryptionKey = process.env.ENCRYPTION_KEY;
+console.log("Encryption Key:", encryptionKey);
 
 document.querySelectorAll("input, textarea, form").forEach((element) => {
   element.addEventListener("focus", (event) => {

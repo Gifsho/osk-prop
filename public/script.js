@@ -140,16 +140,16 @@ function switchLanguage() {
 async function login(event) {
   event.preventDefault();
 
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
+  const ยูส__ = document.getElementById("username").value;
+  const พาส__ = document.getElementById("password").value;
 
   // เข้ารหัสข้อมูลก่อนส่งไปยังเซิร์ฟเวอร์
   const encryptedUsername = CryptoJS.AES.encrypt(
-    username,
+    ยูส__,
     encryptionKey
   ).toString();
   const encryptedPassword = CryptoJS.AES.encrypt(
-    password,
+    พาส__,
     encryptionKey
   ).toString();
 

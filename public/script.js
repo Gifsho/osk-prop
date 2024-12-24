@@ -5,15 +5,19 @@ let offsetX = 0,
 let isCapsLock = false;
 let isShift = false;
 let currentLanguage = "english";
-const encryptionKey = "your-encryption-key"; 
+const encryptionKey = "your-encryption-key";
 
-document.querySelectorAll("input, textarea, form").forEach((element) => {
-  element.addEventListener("focus", (event) => {
-    event.stopImmediatePropagation();
-    activeInput = element;
+// เพิ่ม event listener
+document
+  .querySelectorAll("input, textarea, form")
+  .forEach((element) => {
+    element.addEventListener("focus", (event) => {
+      event.stopImmediatePropagation();
+      activeInput = element;
+    });
   });
-});
 
+// แสดง-ซ่อนคีย์บอร์ด
 function toggleKeyboard() {
   const keyboard = document.getElementById("keyboard");
   keyboard.style.display = keyboard.style.display === "flex" ? "none" : "flex";
@@ -70,7 +74,6 @@ function toggleShift() {
   const shiftKeys = document.querySelectorAll(".shift");
   shiftKeys.forEach((key) => key.classList.toggle("shift-active"));
 
-  // Update keys to show shifted characters
   document.querySelectorAll(".key").forEach((key) => {
     const normalText = key.getAttribute("data-normal");
     const shiftedText = key.getAttribute("data-shifted");
@@ -95,6 +98,7 @@ function backspace() {
   }
 }
 
+// จัดการการลากคีย์บอร์ด
 function startDrag(event) {
   isDragging = true;
   offsetX = event.clientX - document.getElementById("keyboard").offsetLeft;
@@ -174,11 +178,11 @@ async function login(event) {
   }
 }
 
+// ปลี่ยนสีพื้นหลัง
 function toggletap(event) {
   const key = event.target;
   key.style.backgroundColor = "#45a049";
 
-  // Reset the key's background color after a brief delay
   setTimeout(() => {
     key.style.backgroundColor = "#d3d3d3";
   }, 100);
@@ -236,7 +240,6 @@ function Scramble() {
   thaiScramble.style.display = "none";
   engScramble.style.display = "none";
 
-  // แสดงคีย์บอร์ด Scrambled
   if (scrambledKeyboard) {
     scrambledKeyboard.style.display = "block";
     scrambleKeys(); // เรียกฟังก์ชันเพื่อสุ่มตัวเลขบนคีย์บอร์ด
@@ -253,51 +256,10 @@ function scrambleKeys() {
   const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
   shuffleArray(numbers); // เรียงลำดับตัวเลขแบบสุ่ม
 
-  // กำหนดตัวเลขที่สุ่มให้กับแต่ละปุ่ม
   keys.forEach((key, index) => {
     key.textContent = numbers[index];
   });
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".key").forEach((key) => {
-    key.addEventListener("click", (event) => {
-      if (key.classList.contains("capslock")) {
-        toggleCapsLock();
-      } else if (key.classList.contains("backspace")) {
-        backspace();
-      } else if (key.classList.contains("shift")) {
-        toggleShift();
-      } else if (key.classList.contains("enter")) {
-        toggleEnter();
-      } else if (key.classList.contains("toggle-lang")) {
-        switchLanguage();
-      } else {
-        handleKeyPress(key);
-      }
-    });
-  });
-
-  const loginButton = document.getElementById("login-button");
-  const toggleKeyboards = document.getElementById("toggleKeyboard");
-
-  loginButton.addEventListener("click", login);
-  toggleKeyboards.addEventListener("click", toggleKeyboard);
-
-  document
-    .getElementById("switch-toggle")
-    .addEventListener("click", switchLanguage);
-  document.getElementById("numpad-toggle").addEventListener("click", Numpad);
-  document
-    .getElementById("scramble-toggle")
-    .addEventListener("click", Scramble);
-  document
-    .getElementById("scramble-toggle-thai")
-    .addEventListener("click", () => scrambleLanguage("thai"));
-  document
-    .getElementById("scramble-toggle-eng")
-    .addEventListener("click", () => scrambleLanguage("english"));
-});
 
 // ฟังก์ชัน scramble สำหรับภาษาไทยและภาษาอังกฤษ
 function scrambleLanguage(language) {
@@ -380,3 +342,43 @@ function changeDropdownName(name) {
   const dropdownButton = document.getElementById("dropdownButton");
   dropdownButton.textContent = name;
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".key").forEach((key) => {
+    key.addEventListener("click", (event) => {
+      if (key.classList.contains("capslock")) {
+        toggleCapsLock();
+      } else if (key.classList.contains("backspace")) {
+        backspace();
+      } else if (key.classList.contains("shift")) {
+        toggleShift();
+      } else if (key.classList.contains("enter")) {
+        toggleEnter();
+      } else if (key.classList.contains("toggle-lang")) {
+        switchLanguage();
+      } else {
+        handleKeyPress(key);
+      }
+    });
+  });
+
+  const loginButton = document.getElementById("login-button");
+  const toggleKeyboards = document.getElementById("toggleKeyboard");
+
+  loginButton.addEventListener("click", login);
+  toggleKeyboards.addEventListener("click", toggleKeyboard);
+
+  document
+    .getElementById("switch-toggle")
+    .addEventListener("click", switchLanguage);
+  document.getElementById("numpad-toggle").addEventListener("click", Numpad);
+  document
+    .getElementById("scramble-toggle")
+    .addEventListener("click", Scramble);
+  document
+    .getElementById("scramble-toggle-thai")
+    .addEventListener("click", () => scrambleLanguage("thai"));
+  document
+    .getElementById("scramble-toggle-eng")
+    .addEventListener("click", () => scrambleLanguage("english"));
+});

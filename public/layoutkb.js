@@ -6,16 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
     keyboardContainer.innerHTML = `
         <div class="keyboard-container">
-            <div class="dropdown">
-                <button class="dropdown-button" id="dropdownButton" style="color: black;">เลือกแป้นพิมพ์</button>
-                <div class="dropdown-content">
-                    <button id="switch-toggle" onclick="changeDropdownName('Switch Language')">Switch Language</button>
-                    <button id="numpad-toggle" onclick="changeDropdownName('Numpad Keyboard')">Numpad Keyboard</button>
-                    <button id="scramble-toggle" onclick="changeDropdownName('Scramble Numpad')">Scramble Numpad</button>
-                    <button id="scramble-toggle-thai" onclick="changeDropdownName('Thai Scramble')">Thai Scramble</button>
-                    <button id="scramble-toggle-eng" onclick="changeDropdownName('English Scramble')">English Scramble</button>
-                </div>
-            </div>
+           
             <div id="english-keyboard" class="keyboard-layout">
                   <!-- English Keyboard Rows -->
                   <div class="keyboard-row">

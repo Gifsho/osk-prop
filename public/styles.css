@@ -47,7 +47,7 @@ body {
     transform: translateX(-50%);
     background-color: #fff;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 50px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: max-content;
@@ -63,15 +63,15 @@ body {
 }
 
 .key {
-    width: 50px;
-    height: 50px;
-    margin: 5px;
+    width: 20px;
+    height: 35px;
+    margin: 3px;
     background: #d3d3d3;
     text-align: center;
     line-height: 50px;
     cursor: pointer;
-    border-radius: 6px;
-    font-size: 18px;
+    border-radius: 10px;
+    font-size: 15px;
     transition: all 0.3s ease;
     user-select: none;
 }
@@ -86,17 +86,17 @@ body {
 }
 
 .key.shift-active {
-    background-color: #4CAF50;
+    background-color: #2c2c2c;
     color: white;
 }
 
 .key.caps-active {
-    background-color: #2196F3;
+    background-color: #2c2c2c;
     color: white;
 }
 
 .space-bar {
-    width: 250px;
+    width: 450px;
 }
 
 .keyboard-container {
@@ -107,7 +107,8 @@ body {
 
 .shift,
 .backspace,
-.enter {
+.enter,
+.tab {
     width: 100px;
 }
 
@@ -123,7 +124,7 @@ body {
     padding: 10px 20px;
     background-color: #f0f0f0;
     border: 1px solid #ccc;
-    margin: 5px;
+    margin: 2px;
     transition: background-color 0.3s ease;
 }
 
@@ -159,9 +160,10 @@ body {
     background-color: #4CAF50; /* สีปุ่มหลัก */
     color: white;
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 14px;
     border: none;
     cursor: pointer;
+    border-radius: 17px;
 }
 
 .dropdown-content {

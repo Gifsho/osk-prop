@@ -98,6 +98,17 @@ function backspace() {
   }
 }
 
+function Tab() {
+  if (activeInput) {
+    let start = activeInput.selectionStart;
+    let end = activeInput.selectionEnd;
+
+    activeInput.value = activeInput.value.substring(0, start) + "    " + activeInput.value.substring(end);
+
+    activeInput.selectionStart = activeInput.selectionEnd = start + 4;
+  }
+}
+
 // จัดการการลากคีย์บอร์ด
 function startDrag(event) {
   isDragging = true;
@@ -348,6 +359,8 @@ document.addEventListener("DOMContentLoaded", () => {
     key.addEventListener("click", (event) => {
       if (key.classList.contains("capslock")) {
         toggleCapsLock();
+      } else if (key.classList.contains("tab")) {
+        Tab();
       } else if (key.classList.contains("backspace")) {
         backspace();
       } else if (key.classList.contains("shift")) {

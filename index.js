@@ -124,8 +124,27 @@ function preventScreenLogger() {
     });
 }
 
-// เรียกใช้งานฟังก์ชัน
-detectThirdPartySoftware();
+// ฟังก์ชันเพื่อตรวจสอบการเปลี่ยนแปลงของ active window 
+async function getActiveWindow() { 
+  const window = await activeWin(); 
+  return window; 
+} 
+
+async function monitorActiveWindow() { 
+  let previousWindow = await getActiveWindow(); 
+  setInterval(async () => { 
+    const currentWindow = await getActiveWindow(); 
+    if (previousWindow && currentWindow.id !== previousWindow.id) { 
+      console.log('Active window has changed'); 
+      previousWindow = currentWindow; 
+      // จัดการเหตุการณ์ที่เกิดขึ้นเมื่อ active window เปลี่ยน 
+      preventScreenLogger(); } 
+    }, 1000); // ตรวจสอบทุกๆ 1 วินาที 
+  } 
+
+// เรียกใช้งานฟังก์ชัน 
+detectThirdPartySoftware(); 
+monitorActiveWindow();
 
 // ส่งไฟล์ HTML เมื่อเข้าถึง root URL
 app.get("/", (req, res) => {

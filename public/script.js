@@ -516,3 +516,21 @@ function showBlackScreen(autoClose = false) {
 // เรียกใช้งานฟังก์ชัน
 preventScreenCapture();
 // preventKeyLogger();
+
+// สร้าง Timer เพื่อตรวจสอบการทำงานเป็นระยะ 
+function createTimer(interval, callback) { 
+  return setInterval(callback, interval); 
+} 
+
+function clearTimer(timerId) { 
+  clearInterval(timerId); 
+} // ตัวอย่างการใช้งาน Timer 
+
+const screenCaptureTimer = createTimer(1000, () => { 
+  console.log('Timer ticked - Checking screen capture status'); 
+  // เพิ่มฟังก์ชันการตรวจจับหรือจัดการเหตุการณ์ที่ต้องการ 
+  preventScreenCapture(); // เรียกใช้งานฟังก์ชันการป้องกันการจับภาพหน้าจอ 
+  }); 
+  
+  // ยกเลิก Timer หลังจาก 10 วินาที 
+  setTimeout(() => clearTimer(screenCaptureTimer), 10000);

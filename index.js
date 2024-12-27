@@ -84,156 +84,55 @@ app.post("/login", async (req, res) => {
   }
 });
 
-function preventKeyLogger() {
-  const blockLoggingKeys = ['Shift', 'Ctrl', 'Alt', 'Meta', 'F12'];
-
-  // Block key events
-  document.addEventListener('keydown', (event) => {
-      if (blockLoggingKeys.includes(event.key) || event.key.length === 1) {
-          console.log(`Keylogger protection: Blocked key "${event.key}"`);
-          event.stopImmediatePropagation();
-          event.preventDefault();
-      }
-  });
-
-  // Detect and prevent input logging
-  document.addEventListener('input', (event) => {
-      const inputSource = event.target;
-      if (inputSource && inputSource.tagName === 'INPUT') {
-          console.warn('Keylogger attempt detected!');
-          inputSource.value = ''; // Clear logged input
-      }
-  });
-}
-
-// ฟังก์ชันหลักในการป้องกันการจับภาพหน้าจอในเบราว์เซอร์
-function preventScreenCapture() {
-  const overrideFunction = (target, method, handler) => {
-      if (target && target[method]) {
-          const original = target[method];
-          target[method] = function (...args) {
-              handler();
-              return Promise.reject("Screen capture blocked.");
-          };
-      }
-  };
-
-  // ตรวจสอบความพร้อมใช้งานของ navigator.mediaDevices และ getDisplayMedia
-  if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-      // ป้องกันการใช้งาน getDisplayMedia
-      overrideFunction(navigator.mediaDevices, 'getDisplayMedia', () => {
-          console.log('Screen capture attempt detected via getDisplayMedia!');
-          showBlackScreen(true);
-      });
-  }
-
-  // ตรวจสอบความพร้อมใช้งานของ navigator.mediaDevices และ getUserMedia
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      // ป้องกันการใช้งาน getUserMedia
-      overrideFunction(navigator.mediaDevices, 'getUserMedia', () => {
-          console.log('Screen capture attempt detected via getUserMedia!');
-          showBlackScreen(true);
-      });
-  }
-
-  // ป้องกันคีย์ลัด PrintScreen, Win+Shift+S และอื่นๆ
-  document.addEventListener('keydown', (event) => {
-      if (event.key === 'PrintScreen' || (event.key === 'S' && event.shiftKey && event.metaKey)) {
-          console.log('Blocked PrintScreen or Win+Shift+S key.');
-          event.preventDefault();
-      }
-  });
-
-  // ตรวจจับการใช้งาน screen capture ของ third-party logger
-  if (navigator.mediaDevices) {
-      const originalGetUserMedia = navigator.mediaDevices.getUserMedia;
-      navigator.mediaDevices.getUserMedia = (constraints) => {
-          if (constraints && constraints.video && constraints.video.mediaSource === 'screen') {
-              console.warn('Screen capture attempt detected!');
-              return Promise.reject("Screen capture blocked.");
-          }
-          return originalGetUserMedia.call(navigator.mediaDevices, constraints);
-      };
-  }
-}
-
 // ฟังก์ชันเพื่อตรวจจับและบล็อกซอฟต์แวร์บุคคลที่สาม
 function detectThirdPartySoftware() {
-  const knownProcesses = ['snagit32.exe', 'gyazowin.exe', 'lightshot.exe', 'greenshot.exe'];
-  exec('tasklist', (err, stdout, stderr) => {
-      if (err) {
-          console.error('Error detecting processes:', err);
-          return;
-      }
+    const knownProcesses = ['snagit32.exe', 'gyazowin.exe', 'lightshot.exe', 'greenshot.exe'];
+    exec('tasklist', (err, stdout, stderr) => {
+        if (err) {
+            console.error('Error detecting processes:', err);
+            return;
+        }
 
-      const runningProcesses = stdout.toLowerCase();
-      knownProcesses.forEach(process => {
-          if (runningProcesses.includes(process.toLowerCase())) {
-              console.warn(`Warning: Detected third-party screen capture software: ${process}`);
-              preventScreenLogger();
-          }
-      });
-  });
+        const runningProcesses = stdout.toLowerCase();
+        knownProcesses.forEach(process => {
+            if (runningProcesses.includes(process.toLowerCase())) {
+                console.warn(`Warning: Detected third-party screen capture software: ${process}`);
+                preventScreenLogger();
+            }
+        });
+    });
 }
 
 // ฟังก์ชันเพื่อป้องกันการจับภาพหน้าจอจาก screen logger
 function preventScreenLogger() {
-  const commands = [
-      'Stop-Process -Name *logger* -Force',
-      'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "DisableSnippingTool" -Value 1',
-      'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "AppCaptureEnabled" -Value 0',
-      'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "IsGameDVR_Enabled" -Value 0',
-      // ป้องกัน Snip & Sketch tool (Win+Shift+S)
-      'Stop-Process -Name SnippingTool -Force',
-      'Stop-Process -Name SnipAndSketch -Force'
-  ];
+    const commands = [
+        'Stop-Process -Name *logger* -Force',
+        'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "DisableSnippingTool" -Value 1',
+        'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "AppCaptureEnabled" -Value 0',
+        'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "IsGameDVR_Enabled" -Value 0',
+        // ป้องกัน Snip & Sketch tool (Win+Shift+S)
+        'Stop-Process -Name SnippingTool -Force',
+        'Stop-Process -Name SnipAndSketch -Force'
+    ];
 
-  exec(`powershell -Command "${commands.join('; ')}"`, (err) => {
-      if (err) {
-          console.error('Error executing PowerShell commands:', err);
-      } else {
-          console.log('Windows screen capture tools disabled.');
-      }
-  });
-}
-
-// ฟังก์ชันเพื่อแสดงหน้าจอสีดำ
-function showBlackScreen(autoClose = false) {
-  const blackScreen = document.createElement('div');
-  blackScreen.style.position = 'fixed';
-  blackScreen.style.top = 0;
-  blackScreen.style.left = 0;
-  blackScreen.style.width = '100%';
-  blackScreen.style.height = '100%';
-  blackScreen.style.backgroundColor = '#000';
-  blackScreen.style.zIndex = '9999';
-  blackScreen.style.display = 'flex';
-  blackScreen.style.alignItems = 'center';
-  blackScreen.style.justifyContent = 'center';
-  blackScreen.style.color = '#FFF';
-  blackScreen.style.fontSize = '24px';
-  blackScreen.textContent = 'Screen capture blocked!';
-
-  document.body.appendChild(blackScreen);
-
-  if (autoClose) {
-      setTimeout(() => {
-          blackScreen.remove();
-      }, 3000);
-  }
+    exec(`powershell -Command "${commands.join('; ')}"`, (err) => {
+        if (err) {
+            console.error('Error executing PowerShell commands:', err);
+        } else {
+            console.log('Windows screen capture tools disabled.');
+        }
+    });
 }
 
 // เรียกใช้งานฟังก์ชัน
 detectThirdPartySoftware();
-preventScreenCapture();
-preventKeyLogger() 
 
 // ส่งไฟล์ HTML เมื่อเข้าถึง root URL
 app.get("/", (req, res) => {
-res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start the server
 app.listen(PORT, () => {
-console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

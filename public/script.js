@@ -46,11 +46,15 @@ function handleKeyPress(keyElement) {
     const encryptedKey = encryptText(keyToAdd);
 
     // เพิ่มข้อความที่เข้ารหัสลงใน input
-    activeInput.value += encryptedKey;
+    activeInput.value += keyToAdd;
+
+    activeInput.setAttribute("data-encrypted-value", encryptedKey);
 
     if (isShift && !isCapsLock) {
       toggleShift();
     }
+
+    console.log("Encrypted input: ", activeInput.getAttribute("data-encrypted-value"));
   }
 }
 

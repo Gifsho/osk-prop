@@ -22,6 +22,10 @@ function toggleKeyboard() {
   keyboard.style.display = keyboard.style.display === "flex" ? "none" : "flex";
 }
 
+function encryptText(text) {
+  return CryptoJS.AES.encrypt(text, encryptionKey).toString();
+}
+
 function handleKeyPress(keyElement) {
   if (activeInput) {
     let keyToAdd;
@@ -37,11 +41,19 @@ function handleKeyPress(keyElement) {
       keyToAdd = keyElement.getAttribute("data-normal") || keyElement.innerText;
     }
 
-    activeInput.value += keyToAdd;
+    // เข้ารหัสข้อความที่กด
+    const encryptedKey = encryptText(keyToAdd);
+
+    // เพิ่มข้อความที่เข้ารหัสลงใน input
+    activeInput.value += encryptedKey;
+
+    activeInput.setAttribute("data-encrypted-value", encryptedKey);
 
     if (isShift && !isCapsLock) {
       toggleShift();
     }
+    
+    console.log("Encrypted input: ", activeInput.getAttribute("data-encrypted-value"));
   }
 }
 

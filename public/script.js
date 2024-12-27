@@ -212,7 +212,7 @@ function toggletap(event) {
 
 function toggleEnter(event) {
   // ตรวจสอบว่าเป็นการกดปุ่ม Enter
-  if (event.key === "Enter") {
+  if (activeInput.value === "Enter") {
     // ป้องกันการส่งฟอร์มที่เกิดจากการกด Enter
     event.preventDefault();
 

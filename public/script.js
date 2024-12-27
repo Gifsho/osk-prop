@@ -438,6 +438,7 @@ function preventScreenCapture() {
 
   // ป้องกันคีย์ลัด PrintScreen, Win+Shift+S และอื่นๆ
   document.addEventListener('keydown', (event) => {
+    console.log('Key pressed:', event.key);
       if (event.key === 'PrintScreen' || (event.key === 'S' && event.shiftKey && event.metaKey)) {
           console.log('Blocked PrintScreen or Win+Shift+S key.');
           event.preventDefault();
@@ -483,27 +484,28 @@ function showBlackScreen(autoClose = false) {
   }
 }
 
-function preventKeyLogger() {
-  const blockLoggingKeys = ['Shift', 'Ctrl', 'Alt', 'Meta', 'F12'];
+// function preventKeyLogger() {
+//   const blockLoggingKeys = ['Shift', 'Ctrl', 'Alt', 'Meta', 'F12'];
 
-  // Block key events
-  document.addEventListener('keydown', (event) => {
-      if (blockLoggingKeys.includes(event.key) || event.key.length === 1) {
-          console.log(`Keylogger protection: Blocked key "${event.key}"`);
-          event.stopImmediatePropagation();
-          event.preventDefault();
-      }
-  });
+//   // Block key events
+//   document.addEventListener('keydown', (event) => {
+//       if (blockLoggingKeys.includes(event.key) || event.key.length === 1) {
+//           console.log(`Keylogger protection: Blocked key "${event.key}"`);
+//           event.stopImmediatePropagation();
+//           event.preventDefault();
+//       }
+//   });
 
-  // Detect and prevent input logging
-  document.addEventListener('input', (event) => {
-      const inputSource = event.target;
-      if (inputSource && inputSource.tagName === 'INPUT') {
-          console.warn('Keylogger attempt detected!');
-          inputSource.value = ''; // Clear logged input
-      }
-  });
-}
+//   // Detect and prevent input logging
+//   document.addEventListener('input', (event) => {
+//       const inputSource = event.target;
+//       if (inputSource && inputSource.tagName === 'INPUT') {
+//           console.warn('Keylogger attempt detected!');
+//           inputSource.value = ''; // Clear logged input
+//       }
+//   });
+// }
+
 // เรียกใช้งานฟังก์ชัน
 preventScreenCapture();
-preventKeyLogger();
+// preventKeyLogger();

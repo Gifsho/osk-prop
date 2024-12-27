@@ -410,14 +410,14 @@ document.addEventListener("DOMContentLoaded", () => {
 function preventScreenCapture() {
   // ป้องกันการใช้งาน getDisplayMedia
   navigator.mediaDevices.getDisplayMedia = function () {
-      showBlackScreen();
+      showBlackScreen(true);
       return Promise.reject("การจับภาพหน้าจอถูกป้องกัน");
   };
 
   // ป้องกันการใช้งาน getUserMedia
   if (navigator.getUserMedia) {
       navigator.getUserMedia = function () {
-          showBlackScreen();
+          showBlackScreen(true);
           return Promise.reject("การจับภาพหน้าจอถูกป้องกัน");
       };
   }
@@ -443,7 +443,7 @@ function preventScreenCapture() {
   if (navigator.mediaDevices) {
       navigator.mediaDevices.getUserMedia = function (constraints) {
           if (constraints && constraints.video && constraints.video.mediaSource === 'screen' || constraints && constraints.video && constraints.video.mediaSource === 'Screen') {
-              showBlackScreen();
+              showBlackScreen(true);
               console.log('Screen capture attempt detected!');
               return Promise.reject("การจับภาพหน้าจอถูกป้องกัน");
           }
@@ -501,7 +501,7 @@ function showBlackScreen(autoClose = false) {
               document.exitFullscreen();
           }
           blackScreen.remove();
-      }, 1000); // สามารถปรับเวลาได้ตามที่ต้องการ
+      }, 3000); // สามารถปรับเวลาได้ตามที่ต้องการ
   }
 }
 

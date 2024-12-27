@@ -5,6 +5,7 @@ let offsetX = 0,
 let isCapsLock = false;
 let isShift = false;
 let currentLanguage = "english";
+const encryptionKey = "1234567890123456";
 
 // เพิ่ม event listener
 document
@@ -161,8 +162,6 @@ function switchLanguage() {
 
 async function login(event) {
   event.preventDefault();
-
-  const encryptionKey = "1234567890123456";
 
   const u___n___ = document.getElementById("u___n___").value;
   const p___w___ = document.getElementById("p___w___").value;

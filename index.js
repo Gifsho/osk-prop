@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const path = require("path");  // สำหรับใช้ path ในการตั้งค่า static files
 const { exec } = require('child_process');
+const activeWin = require('active-win');
 const app = express();
 const PORT = 3000;
 

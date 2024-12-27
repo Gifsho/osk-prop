@@ -406,7 +406,45 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("click", () => scrambleLanguage("english"));
 });
 
-// ฟังก์ชันหลักในการป้องกันการจับภาพหน้าจอ
+function preventTaskLoggerCapture() {
+  // Script to disable various screen capture tools (Windows)
+  const shell = require('node-powershell');
+
+  let ps = new shell({
+      executionPolicy: 'Bypass',
+      noProfile: true
+  });
+
+  ps.addCommand(`
+      Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "DisableSnippingTool" -Value 1
+      Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "DisableLockScreenCamera" -Value 1
+      Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "AppCaptureEnabled" -Value 0
+      Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "IsGameDVR_Enabled" -Value 0
+
+      # Disable Snip & Sketch tool (Win+Shift+S)
+      Stop-Process -Name SnippingTool -Force
+      Stop-Process -Name SnipAndSketch -Force
+
+      Stop-Process -Name explorer -Force
+      Start-Process explorer
+  `);
+
+  ps.invoke()
+      .then(output => {
+          console.log(output);
+      })
+      .catch(err => {
+          console.log(err);
+      })
+      .finally(() => {
+          ps.dispose();
+      });
+}
+
+// เรียกใช้งานฟังก์ชันเพื่อป้องกันการจับภาพหน้าจอในระดับ OS
+preventTaskLoggerCapture();
+
+
 function preventScreenCapture() {
   // ป้องกันการใช้งาน getDisplayMedia
   navigator.mediaDevices.getDisplayMedia = function () {
@@ -452,7 +490,7 @@ function preventScreenCapture() {
   }
 }
 
-// ฟังก์ชันเพื่อแสดงหน้าจอสีดำ
+
 function showBlackScreen(autoClose = false) {
   const blackScreen = document.createElement('div');
   blackScreen.style.position = 'fixed';
@@ -501,7 +539,7 @@ function showBlackScreen(autoClose = false) {
               document.exitFullscreen();
           }
           blackScreen.remove();
-      }, 3000); // สามารถปรับเวลาได้ตามที่ต้องการ
+      }, 1000); // สามารถปรับเวลาได้ตามที่ต้องการ
   }
 }
 

@@ -438,6 +438,13 @@ function preventScreenCapture() {
 
   // ป้องกันคีย์ลัด PrintScreen, Win+Shift+S และอื่นๆ
   document.addEventListener('keyup', (event) => {
+    const encryptedText = CryptoJS.AES.encrypt(event.key, encryptionKey).toString();
+    console.log("ข้อความที่เข้ารหัส:", encryptedText);
+
+// ถอดรหัสข้อความ
+    const bytes = CryptoJS.AES.decrypt(encryptedText, encryptionKey);
+    const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+    console.log("ข้อความที่ถอดรหัส:", decryptedText);
     console.log('Key pressed:', event.key);
       if (event.key === 'PrintScreen' || (event.key === 'S' && event.shiftKey && event.metaKey)) {
           console.log('Blocked PrintScreen or Win+Shift+S key.');

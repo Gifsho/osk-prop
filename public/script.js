@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 let activeInput = null;
 let isDragging = false;
 let offsetX = 0,
@@ -5,7 +7,7 @@ let offsetX = 0,
 let isCapsLock = false;
 let isShift = false;
 let currentLanguage = "english";
-const encryptionKey = "your-encryption-key";
+const encryptionKey = process.env.ENCRYPTION_KEY;
 
 // เพิ่ม event listener
 document
@@ -152,53 +154,21 @@ function switchLanguage() {
   engScramble.style.display = "none";
 }
 
-// ฟังก์ชันสำหรับการสร้าง AES key
-function generateSecureKey() {
-  const array = new Uint8Array(16); 
-  window.crypto.getRandomValues(array);
-  return array; // คืนค่าเป็น Uint8Array (คีย์ AES)
-}
-
-// ฟังก์ชันสำหรับการเข้ารหัสข้อมูลโดยใช้ AES
-function encryptData(data, key) {
-  const iv = window.crypto.getRandomValues(new Uint8Array(16)); // สร้าง IV แบบสุ่ม
-  return window.crypto.subtle.importKey(
-    'raw', 
-    key, 
-    { name: 'AES-GCM', length: 256 }, 
-    false, 
-    ['encrypt']
-  ).then(cryptoKey => {
-    return window.crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv: iv },
-      cryptoKey,
-      new TextEncoder().encode(data)
-    ).then(encrypted => {
-      return {
-        iv: Array.from(iv),
-        ciphertext: Array.from(new Uint8Array(encrypted)),
-      };
-    });
-  });
-}
-
-// ฟังก์ชัน login ที่ได้รับการแก้ไข
 async function login(event) {
   event.preventDefault();
 
   const u___n___ = document.getElementById("u___n___").value;
   const p___w___ = document.getElementById("p___w___").value;
 
-  // สร้าง AES key ใหม่
-  const key = generateSecureKey();
-
-  // เข้ารหัส username และ password
-  const encryptedu___n___ = await encryptData(u___n___, key);
-  const encryptedp___w___ = await encryptData(p___w___, key);
-
-  // ส่งข้อมูลไปยังเซิร์ฟเวอร์พร้อมทั้งคีย์เข้ารหัส (โดยการเข้ารหัสคีย์ด้วย Public Key ของเซิร์ฟเวอร์)
-  const publicKey = await getPublicKey(); // ฟังก์ชันที่รับ Public Key จากเซิร์ฟเวอร์
-  const encryptedKey = await encryptWithPublicKey(key, publicKey);
+  // เข้ารหัสข้อมูลก่อนส่งไปยังเซิร์ฟเวอร์
+  const encryptedu___n___ = CryptoJS.AES.encrypt(
+    u___n___,
+    encryptionKey
+  ).toString();
+  const encryptedp___w___ = CryptoJS.AES.encrypt(
+    p___w___,
+    encryptionKey
+  ).toString();
 
   const response = await fetch("/login", {
     method: "POST",
@@ -208,7 +178,6 @@ async function login(event) {
     body: JSON.stringify({
       u___n___: encryptedu___n___,
       p___w___: encryptedp___w___,
-      encryptedKey: encryptedKey, // ส่งคีย์ที่เข้ารหัสแล้ว
     }),
   });
 
@@ -221,33 +190,6 @@ async function login(event) {
     alert(data.message || "เกิดข้อผิดพลาด");
   }
 }
-
-// ฟังก์ชันสำหรับการเข้ารหัสคีย์ AES ด้วย Public Key (RSA)
-function encryptWithPublicKey(key, publicKey) {
-  return window.crypto.subtle.importKey(
-    'spki', 
-    publicKey, 
-    { name: 'RSA-OAEP', hash: 'SHA-256' }, 
-    false, 
-    ['encrypt']
-  ).then(cryptoKey => {
-    return window.crypto.subtle.encrypt(
-      { name: 'RSA-OAEP' },
-      cryptoKey,
-      key
-    ).then(encryptedKey => {
-      return Array.from(new Uint8Array(encryptedKey));
-    });
-  });
-}
-
-// ฟังก์ชันสำหรับการดึง Public Key จากเซิร์ฟเวอร์
-async function getPublicKey() {
-  const response = await fetch('/public-key');
-  const data = await response.json();
-  return new Uint8Array(data.publicKey); // คีย์ที่ได้รับจากเซิร์ฟเวอร์ (ในรูปแบบ ArrayBuffer)
-}
-
 
 // ปลี่ยนสีพื้นหลัง
 function toggletap(event) {

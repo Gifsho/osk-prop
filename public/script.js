@@ -167,30 +167,22 @@ function switchLanguage() {
 async function login(event) {
   event.preventDefault();
 
-  const u___n___ = document.getElementById("u___n___").value;
-  const p___w___ = document.getElementById("p___w___").value;
-
-  // เข้ารหัสข้อมูลก่อนส่งไปยังเซิร์ฟเวอร์
-  const encryptedu___n___ = CryptoJS.AES.encrypt(
-    u___n___,
-    encryptionKey
-  ).toString();
-  const encryptedp___w___ = CryptoJS.AES.encrypt(
-    p___w___,
-    encryptionKey
-  ).toString();
+  // ดึงค่าที่เข้ารหัสจากฟอร์ม
+  const encryptedUsername = document.getElementById("u___n___").getAttribute("data-encrypted-value");
+  const encryptedPassword = document.getElementById("p___w___").getAttribute("data-encrypted-value");
 
   const loginData = {
-    u___n___: encryptedu___n___,
-    p___w___: encryptedp___w___,
+    u___n___: encryptedUsername,
+    p___w___: encryptedPassword,
   };
-  
+
+  // ส่งข้อมูลที่เข้ารหัสไปยังเซิร์ฟเวอร์
   const response = await fetch('https://logintest-gxrh.onrender.com/login', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(loginData)
+    body: JSON.stringify(loginData),
   });
 
   const data = await response.json();

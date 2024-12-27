@@ -442,7 +442,7 @@ function preventScreenCapture() {
   // ตรวจจับการใช้ screen.capture ของ third-party logger พร้อมแจ้งเตือน
   if (navigator.mediaDevices) {
       navigator.mediaDevices.getUserMedia = function (constraints) {
-          if (constraints && constraints.video && constraints.video.mediaSource === 'screen') {
+          if (constraints && constraints.video && constraints.video.mediaSource === 'screen' || constraints && constraints.video && constraints.video.mediaSource === 'Screen') {
               showBlackScreen();
               console.log('Screen capture attempt detected!');
               return Promise.reject("การจับภาพหน้าจอถูกป้องกัน");

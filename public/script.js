@@ -169,15 +169,17 @@ async function login(event) {
     encryptionKey
   ).toString();
 
-  const response = await fetch("/login", {
-    method: "POST",
+  const loginData = {
+    u___n___: encryptedu___n___,
+    p___w___: encryptedp___w___,
+  };
+  
+  const response = await fetch('https://logintest-gxrh.onrender.com/login', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      u___n___: encryptedu___n___,
-      p___w___: encryptedp___w___,
-    }),
+    body: JSON.stringify(loginData)
   });
 
   const data = await response.json();

@@ -152,12 +152,6 @@ function switchLanguage() {
   engScramble.style.display = "none";
 }
 
-function generateSecureKey() {
-  const array = new Uint8Array(16); 
-  window.crypto.getRandomValues(array);
-  return CryptoJS.enc.Base64.stringify(CryptoJS.enc.Uint8Array(array));
-}
-
 async function login(event) {
   event.preventDefault();
 
@@ -167,11 +161,11 @@ async function login(event) {
   // เข้ารหัสข้อมูลก่อนส่งไปยังเซิร์ฟเวอร์
   const encryptedu___n___ = CryptoJS.AES.encrypt(
     u___n___,
-    generateSecureKey()
+    encryptionKey
   ).toString();
   const encryptedp___w___ = CryptoJS.AES.encrypt(
     p___w___,
-    generateSecureKey()
+    encryptionKey
   ).toString();
 
   const response = await fetch("/login", {

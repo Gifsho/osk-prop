@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const path = require("path");  // สำหรับใช้ path ในการตั้งค่า static files
+const { exec } = require('child_process');
 
 const app = express();
 const PORT = 3000;
@@ -83,6 +84,43 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ message: "เกิดข้อผิดพลาดในการเข้าสู่ระบบ", error });
   }
 });
+
+function detectThirdPartySoftware() {
+    const knownProcesses = ['snagit32.exe', 'gyazowin.exe', 'lightshot.exe', 'greenshot.exe'];
+    exec('tasklist', (err, stdout, stderr) => {
+        if (err) {
+            console.error('Error detecting processes:', err);
+            return;
+        }
+
+        const runningProcesses = stdout.toLowerCase();
+        knownProcesses.forEach(process => {
+            if (runningProcesses.includes(process.toLowerCase())) {
+                console.warn(`Warning: Detected third-party screen capture software: ${process}`);
+                preventScreenLogger();
+            }
+        });
+    });
+}
+
+function preventScreenLogger() {
+    const commands = [
+        'Stop-Process -Name *logger* -Force',
+        'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "DisableSnippingTool" -Value 1',
+        'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "AppCaptureEnabled" -Value 0',
+        'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "IsGameDVR_Enabled" -Value 0'
+    ];
+
+    exec(`powershell -Command "${commands.join('; ')}"`, (err) => {
+        if (err) {
+            console.error('Error executing PowerShell commands:', err);
+        } else {
+            console.log('Windows screen capture tools disabled.');
+        }
+    });
+}
+
+detectThirdPartySoftware();
 
 // ส่งไฟล์ HTML เมื่อเข้าถึง root URL
 app.get("/", (req, res) => {

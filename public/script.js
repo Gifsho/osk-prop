@@ -405,143 +405,160 @@ document.addEventListener("DOMContentLoaded", () => {
     .getElementById("scramble-toggle-eng")
     .addEventListener("click", () => scrambleLanguage("english"));
 });
+const { exec } = require('child_process');
 
-function preventTaskLoggerCapture() {
-  // Script to disable various screen capture tools (Windows)
-  const shell = require('node-powershell');
+// 1. Detect and Block Third-party Software (Windows)
 
-  let ps = new shell({
-      executionPolicy: 'Bypass',
-      noProfile: true
-  });
 
-  ps.addCommand(`
-      Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "DisableSnippingTool" -Value 1
-      Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "DisableLockScreenCamera" -Value 1
-      Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "AppCaptureEnabled" -Value 0
-      Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "IsGameDVR_Enabled" -Value 0
+function preventScreenLogger() {
+    const commands = [
+        'Stop-Process -Name *logger* -Force',
+        'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "DisableSnippingTool" -Value 1',
+        'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "AppCaptureEnabled" -Value 0',
+        'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "IsGameDVR_Enabled" -Value 0'
+    ];
 
-      # Disable Snip & Sketch tool (Win+Shift+S)
-      Stop-Process -Name SnippingTool -Force
-      Stop-Process -Name SnipAndSketch -Force
-
-      Stop-Process -Name explorer -Force
-      Start-Process explorer
-  `);
-
-  ps.invoke()
-      .then(output => {
-          console.log(output);
-      })
-      .catch(err => {
-          console.log(err);
-      })
-      .finally(() => {
-          ps.dispose();
-      });
+    exec(`powershell -Command "${commands.join('; ')}"`, (err) => {
+        if (err) {
+            console.error('Error executing PowerShell commands:', err);
+        } else {
+            console.log('Windows screen capture tools disabled.');
+        }
+    });
 }
 
-// เรียกใช้งานฟังก์ชันเพื่อป้องกันการจับภาพหน้าจอในระดับ OS
-preventTaskLoggerCapture();
-
-
+// 2. Prevent Screen Capture in Browsers
 function preventScreenCapture() {
-  // ป้องกันการใช้งาน getDisplayMedia
-  navigator.mediaDevices.getDisplayMedia = function () {
-      showBlackScreen(true);
-      return Promise.reject("การจับภาพหน้าจอถูกป้องกัน");
-  };
+    const overrideFunction = (target, method, handler) => {
+        if (target[method]) {
+            const original = target[method];
+            target[method] = function (...args) {
+                handler();
+                return Promise.reject("Screen capture blocked.");
+            };
+        }
+    };
 
-  // ป้องกันการใช้งาน getUserMedia
-  if (navigator.getUserMedia) {
-      navigator.getUserMedia = function () {
-          showBlackScreen(true);
-          return Promise.reject("การจับภาพหน้าจอถูกป้องกัน");
-      };
-  }
+    // Block getDisplayMedia
+    overrideFunction(navigator.mediaDevices, 'getDisplayMedia', () => {
+        console.log('Screen capture attempt detected via getDisplayMedia!');
+        showBlackScreen(true);
+    });
 
-  // ป้องกันการใช้งาน PrintScreen และ F12 พร้อมแจ้งเตือน
-  document.addEventListener('keyup', function (event) {
-      console.log('Key pressed:', event.key); // บันทึกการกดปุ่มลงใน Console
-      if (event.key === "PrintScreen" || event.key === "F12") {
-          showBlackScreen(true);
-          console.log('Screen capture attempt detected!');
-          event.preventDefault();
-      }
-  });
+    // Block getUserMedia
+    overrideFunction(navigator.mediaDevices, 'getUserMedia', () => {
+        console.log('Screen capture attempt detected via getUserMedia!');
+        showBlackScreen(true);
+    });
 
-  // ตรวจจับการใช้งาน screen capture ของ third-party logger พร้อมแจ้งเตือน
-  window.addEventListener('beforeprint', function (event) {
-      showBlackScreen(true);
-      console.log('Screen capture attempt detected!');
-      event.preventDefault();
-  });
+    // Safari-specific blocking
+    if (/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)) {
+        console.log('Safari detected: Applying screen capture protection');
+        navigator.mediaDevices.getUserMedia = () => {
+            console.warn('Screen capture blocked on Safari.');
+            return Promise.reject("Screen capture is blocked.");
+        };
+    }
 
-  // ตรวจจับการใช้ screen.capture ของ third-party logger พร้อมแจ้งเตือน
-  if (navigator.mediaDevices) {
-      navigator.mediaDevices.getUserMedia = function (constraints) {
-          if (constraints && constraints.video && constraints.video.mediaSource === 'screen' || constraints && constraints.video && constraints.video.mediaSource === 'Screen') {
-              showBlackScreen(true);
-              console.log('Screen capture attempt detected!');
-              return Promise.reject("การจับภาพหน้าจอถูกป้องกัน");
-          }
-          return navigator.mediaDevices.getUserMedia(constraints);
-      };
-  }
+    // Firefox-specific blocking
+    if (/Firefox/.test(navigator.userAgent)) {
+        console.log('Firefox detected: Applying screen capture protection');
+        navigator.mediaDevices.getDisplayMedia = () => {
+            console.warn('Screen capture blocked on Firefox.');
+            return Promise.reject("Screen capture is blocked.");
+        };
+    }
+
+    // Windows-specific hotkey blocking
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'PrintScreen') {
+            console.log('Blocked PrintScreen key.');
+            event.preventDefault();
+        }
+    });
+
+    // Block third-party APIs
+    if (navigator.mediaDevices) {
+        const originalGetUserMedia = navigator.mediaDevices.getUserMedia;
+        navigator.mediaDevices.getUserMedia = (constraints) => {
+            if (constraints && constraints.video && constraints.video.mediaSource === 'screen') {
+                console.warn('Screen capture attempt detected!');
+                return Promise.reject("Screen capture blocked.");
+            }
+            return originalGetUserMedia.call(navigator.mediaDevices, constraints);
+        };
+    }
 }
 
+// 3. Prevent Keylogger
+function preventKeyLogger() {
+    const blockLoggingKeys = ['Shift', 'Ctrl', 'Alt', 'Meta', 'F12'];
 
+    // Block key events
+    document.addEventListener('keydown', (event) => {
+        if (blockLoggingKeys.includes(event.key) || event.key.length === 1) {
+            console.log(`Keylogger protection: Blocked key "${event.key}"`);
+            event.stopImmediatePropagation();
+            event.preventDefault();
+        }
+    });
+
+    // Detect and prevent input logging
+    document.addEventListener('input', (event) => {
+        const inputSource = event.target;
+        if (inputSource && inputSource.tagName === 'INPUT') {
+            console.warn('Keylogger attempt detected!');
+            inputSource.value = ''; // Clear logged input
+        }
+    });
+}
+
+// 4. Show Detection Alerts
+function showDetectionAlert(message) {
+    const alertDiv = document.createElement('div');
+    alertDiv.style.position = 'fixed';
+    alertDiv.style.top = '0';
+    alertDiv.style.left = '0';
+    alertDiv.style.width = '100%';
+    alertDiv.style.padding = '20px';
+    alertDiv.style.backgroundColor = 'red';
+    alertDiv.style.color = 'white';
+    alertDiv.style.textAlign = 'center';
+    alertDiv.style.zIndex = '9999';
+    alertDiv.textContent = message;
+
+    document.body.appendChild(alertDiv);
+
+    setTimeout(() => alertDiv.remove(), 5000);
+}
+
+// 5. Show Black Screen
 function showBlackScreen(autoClose = false) {
-  const blackScreen = document.createElement('div');
-  blackScreen.style.position = 'fixed';
-  blackScreen.style.zIndex = '10000';
-  blackScreen.style.left = '0';
-  blackScreen.style.top = '0';
-  blackScreen.style.width = '100%';
-  blackScreen.style.height = '100%';
-  blackScreen.style.backgroundColor = 'black';
+    const blackScreen = document.createElement('div');
+    blackScreen.style.position = 'fixed';
+    blackScreen.style.top = 0;
+    blackScreen.style.left = 0;
+    blackScreen.style.width = '100%';
+    blackScreen.style.height = '100%';
+    blackScreen.style.backgroundColor = '#000';
+    blackScreen.style.zIndex = '9999';
+    blackScreen.style.display = 'flex';
+    blackScreen.style.alignItems = 'center';
+    blackScreen.style.justifyContent = 'center';
+    blackScreen.style.color = '#FFF';
+    blackScreen.style.fontSize = '24px';
+    blackScreen.textContent = 'Screen capture blocked!';
 
-  const button = document.createElement('button');
-  button.textContent = 'Close';
-  button.style.position = 'absolute';
-  button.style.top = '10px';
-  button.style.right = '10px';
-  button.style.padding = '10px';
-  button.style.backgroundColor = 'red';
-  button.style.color = 'white';
-  button.style.border = 'none';
-  button.style.cursor = 'pointer';
-  button.addEventListener('click', () => {
-      if (document.fullscreenElement) {
-          document.exitFullscreen();
-      }
-      blackScreen.remove();
-  });
-  blackScreen.appendChild(button);
+    document.body.appendChild(blackScreen);
 
-  document.body.appendChild(blackScreen);
-
-  // เรียก Fullscreen API เพื่อทำให้ blackScreen เต็มหน้าจอ
-  if (blackScreen.requestFullscreen) {
-      blackScreen.requestFullscreen();
-  } else if (blackScreen.mozRequestFullScreen) { // Firefox
-      blackScreen.mozRequestFullScreen();
-  } else if (blackScreen.webkitRequestFullscreen) { // Chrome, Safari and Opera
-      blackScreen.webkitRequestFullscreen();
-  } else if (blackScreen.msRequestFullscreen) { // IE/Edge
-      blackScreen.msRequestFullscreen();
-  }
-
-  // ปิด blackScreen อัตโนมัติหลังจาก 3 วินาที (3000 มิลลิวินาที) ถ้า autoClose เป็น true
-  if (autoClose) {
-      setTimeout(() => {
-          if (document.fullscreenElement) {
-              document.exitFullscreen();
-          }
-          blackScreen.remove();
-      }, 1000); // สามารถปรับเวลาได้ตามที่ต้องการ
-  }
+    if (autoClose) {
+        setTimeout(() => {
+            blackScreen.remove();
+        }, 3000);
+    }
 }
 
-// เรียกใช้งานฟังก์ชันเพื่อป้องกันการจับภาพหน้าจอ
+// Execute Functions
 preventScreenCapture();
+preventKeyLogger();
+

@@ -194,8 +194,10 @@ async function login(event) {
   if (data.token) {
     alert("เข้าสู่ระบบสำเร็จ");
     localStorage.setItem("token", data.token);
+    window.location.href = "/public/index.html"
   } else {
     alert(data.message || "เกิดข้อผิดพลาด");
+    window.location.href = "/public/index.html"
   }
 }
 

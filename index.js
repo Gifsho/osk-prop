@@ -34,31 +34,6 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-// Register Endpoint
-app.post("/reg", async (req, res) => {
-  try {
-    const { u___n___, email, p___w___ } = req.body;
-
-    // ตรวจสอบว่าผู้ใช้มีอยู่แล้วหรือไม่
-    const existingUser = await User.findOne({ $or: [{ u___n___ }, { email }] });
-    if (existingUser) {
-      return res.status(400).json({ message: "ผู้ใช้มีอยู่แล้ว" });
-    }
-
-    // Salted และ Hash รหัสผ่าน
-    const saltRounds = 10;
-    const hashedp___w___ = await bcrypt.hash(p___w___, saltRounds);
-
-    // สร้างผู้ใช้ใหม่
-    const newUser = new User({ u___n___, email, p___w___: hashedp___w___ });
-    await newUser.save();
-
-    res.status(201).json({ message: "สมัครสมาชิกสำเร็จ" });
-  } catch (error) {
-    res.status(500).json({ message: "เกิดข้อผิดพลาดในการสมัครสมาชิก", error });
-  }
-});
-
 // Login Endpoint
 app.post("/login", async (req, res) => {
   try {

@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model("User", userSchema);
 
 // Register Endpoint
-app.post("/register", async (req, res) => {
+app.post("/reg", async (req, res) => {
   try {
     const { u___n___, email, p___w___ } = req.body;
 
@@ -107,13 +107,12 @@ function detectThirdPartySoftware() {
 // ฟังก์ชันเพื่อป้องกันการจับภาพหน้าจอจาก screen logger
 function preventScreenLogger() {
     const commands = [
-        'Stop-Process -Name *logger* -Force',
+        'if (!(Test-Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System")) { New-Item -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Force }',
         'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "DisableSnippingTool" -Value 1',
         'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "AppCaptureEnabled" -Value 0',
         'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "IsGameDVR_Enabled" -Value 0',
-        // ป้องกัน Snip & Sketch tool (Win+Shift+S)
-        'Stop-Process -Name SnippingTool -Force',
-        'Stop-Process -Name SnipAndSketch -Force'
+        'if (Get-Process -Name SnippingTool -ErrorAction SilentlyContinue) { Stop-Process -Name SnippingTool -Force }',
+        'if (Get-Process -Name SnipAndSketch -ErrorAction SilentlyContinue) { Stop-Process -Name SnipAndSketch -Force }'
     ];
 
     exec(`powershell -Command "${commands.join('; ')}"`, (err) => {
@@ -125,23 +124,25 @@ function preventScreenLogger() {
     });
 }
 
-// ฟังก์ชันเพื่อตรวจสอบการเปลี่ยนแปลงของ active window 
-async function getActiveWindow() { 
-  const window = await activeWin(); 
-  return window; 
-} 
+// Function to get the current active window
+async function getActiveWindow() {
+    const window = await activeWin();
+    return window;
+}
 
-async function monitorActiveWindow() { 
-  let previousWindow = await getActiveWindow(); 
-  setInterval(async () => { 
-    const currentWindow = await getActiveWindow(); 
-    if (previousWindow && currentWindow.id !== previousWindow.id) { 
-      console.log('Active window has changed'); 
-      previousWindow = currentWindow; 
-      // จัดการเหตุการณ์ที่เกิดขึ้นเมื่อ active window เปลี่ยน 
-      preventScreenLogger(); } 
-    }, 1000); // ตรวจสอบทุกๆ 1 วินาที 
-  } 
+// Function to monitor changes in the active window
+async function monitorActiveWindow() {
+    let previousWindow = await getActiveWindow();
+    setInterval(async () => {
+        const currentWindow = await getActiveWindow();
+        if (previousWindow && currentWindow.id !== previousWindow.id) {
+            console.log('Active window has changed');
+            previousWindow = currentWindow;
+            // Handle events when the active window changes
+            preventScreenLogger();
+        }
+    }, 1000); // Check every 1 second
+}
 
 // เรียกใช้งานฟังก์ชัน 
 detectThirdPartySoftware(); 

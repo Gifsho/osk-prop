@@ -169,7 +169,7 @@ async function login(event) {
 
   // ดึงค่าที่เข้ารหัสจากฟอร์ม
   const Username = document.getElementById("u___n___").value;
-  constPassword = document.getElementById("p___w___").value;
+  const Password = document.getElementById("p___w___").value;
 
   // เข้ารหัสข้อมูลก่อนส่งไปยังเซิร์ฟเวอร์
   // const encryptedu___n___ = encryptText(encryptedUsername);

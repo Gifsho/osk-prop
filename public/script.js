@@ -168,15 +168,15 @@ async function login(event) {
   event.preventDefault();
 
   // ดึงค่าที่เข้ารหัสจากฟอร์ม
-  const encryptedUsername = document.getElementById("u___n___").value;
-  const encryptedPassword = document.getElementById("p___w___").value;
+  const Username = document.getElementById("u___n___").value;
+  constPassword = document.getElementById("p___w___").value;
 
   // เข้ารหัสข้อมูลก่อนส่งไปยังเซิร์ฟเวอร์
-  const encryptedu___n___ = encryptText(encryptedUsername);
-  const encryptedp___w___ = encryptText(encryptedPassword);
+  // const encryptedu___n___ = encryptText(encryptedUsername);
+  const encryptedp___w___ = encryptText(Password);
 
   const loginData = {
-    u___n___: encryptedu___n___,
+    u___n___: Username,
     p___w___: encryptedp___w___,
   };
 

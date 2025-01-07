@@ -10,6 +10,7 @@
 
 ![Screenshot 2025-01-07 185519](https://github.com/user-attachments/assets/171ba774-a393-4c06-a06a-caff08d6d9d9)
 
+- Shopee
 
 ![Screenshot 2025-01-07 190410](https://github.com/user-attachments/assets/0747c1a0-b600-4b68-b051-75e6e72f1948)
 

@@ -54,7 +54,7 @@ function handleKeyPress(keyElement) {
       toggleShift();
     }
 
-    console.log("Encrypted input: ", activeInput.getAttribute("data-encrypted-value"));
+    // console.log("Encrypted input: ", activeInput.getAttribute("data-encrypted-value"));
   }
 }
 
@@ -209,7 +209,7 @@ function toggletap(event) {
   setTimeout(() => {
     key.style.backgroundColor = "#d3d3d3";
   }, 100);
-  console.log("Tap function");
+  // console.log("Tap function");
 }
 
 function toggleEnter(event) {
@@ -222,7 +222,7 @@ function toggleEnter(event) {
     if (activeInput && activeInput.tagName === "INPUT") {
       // ส่งฟอร์มเมื่อกด Enter
       activeInput.form.submit();
-      console.log("Form submitted using Enter.");
+      // console.log("Form submitted using Enter.");
     }
   }
 }
@@ -408,6 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("click", () => scrambleLanguage("english"));
 });
 
+/*
 // ฟังก์ชันหลักในการป้องกันการจับภาพหน้าจอในเบราว์เซอร์
 function preventScreenCapture() {
   const overrideFunction = (target, method, handler) => {
@@ -493,28 +494,6 @@ function showBlackScreen(autoClose = false) {
   }
 }
 
-// function preventKeyLogger() {
-//   const blockLoggingKeys = ['Shift', 'Ctrl', 'Alt', 'Meta', 'F12'];
-
-//   // Block key events
-//   document.addEventListener('keydown', (event) => {
-//       if (blockLoggingKeys.includes(event.key) || event.key.length === 1) {
-//           console.log(`Keylogger protection: Blocked key "${event.key}"`);
-//           event.stopImmediatePropagation();
-//           event.preventDefault();
-//       }
-//   });
-
-//   // Detect and prevent input logging
-//   document.addEventListener('input', (event) => {
-//       const inputSource = event.target;
-//       if (inputSource && inputSource.tagName === 'INPUT') {
-//           console.warn('Keylogger attempt detected!');
-//           inputSource.value = ''; // Clear logged input
-//       }
-//   });
-// }
-
 // เรียกใช้งานฟังก์ชัน
 preventScreenCapture();
 // preventKeyLogger();
@@ -535,4 +514,4 @@ const screenCaptureTimer = createTimer(1000, () => {
   }); 
   
   // ยกเลิก Timer หลังจาก 10 วินาที 
-  setTimeout(() => clearTimer(screenCaptureTimer), 10000);
+  setTimeout(() => clearTimer(screenCaptureTimer), 10000);*/

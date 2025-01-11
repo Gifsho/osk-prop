@@ -60,68 +60,69 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// ฟังก์ชันเพื่อตรวจจับและบล็อกซอฟต์แวร์บุคคลที่สาม
-function detectThirdPartySoftware() {
-    const knownProcesses = ['snagit32.exe', 'gyazowin.exe', 'lightshot.exe', 'greenshot.exe'];
-    exec('tasklist', (err, stdout, stderr) => {
-        if (err) {
-            console.error('Error detecting processes:', err);
-            return;
-        }
+// //---------------------
+// // ฟังก์ชันเพื่อตรวจจับและบล็อกซอฟต์แวร์บุคคลที่สาม
+// function detectThirdPartySoftware() {
+//     const knownProcesses = ['snagit32.exe', 'gyazowin.exe', 'lightshot.exe', 'greenshot.exe'];
+//     exec('tasklist', (err, stdout, stderr) => {
+//         if (err) {
+//             console.error('Error detecting processes:', err);
+//             return;
+//         }
 
-        const runningProcesses = stdout.toLowerCase();
-        knownProcesses.forEach(process => {
-            if (runningProcesses.includes(process.toLowerCase())) {
-                console.warn(`Warning: Detected third-party screen capture software: ${process}`);
-                preventScreenLogger();
-            }
-        });
-    });
-}
+//         const runningProcesses = stdout.toLowerCase();
+//         knownProcesses.forEach(process => {
+//             if (runningProcesses.includes(process.toLowerCase())) {
+//                 console.warn(`Warning: Detected third-party screen capture software: ${process}`);
+//                 preventScreenLogger();
+//             }
+//         });
+//     });
+// }
 
-// ฟังก์ชันเพื่อป้องกันการจับภาพหน้าจอจาก screen logger
-function preventScreenLogger() {
-    const commands = [
-        'if (!(Test-Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System")) { New-Item -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Force }',
-        'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "DisableSnippingTool" -Value 1',
-        'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "AppCaptureEnabled" -Value 0',
-        'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "IsGameDVR_Enabled" -Value 0',
-        'if (Get-Process -Name SnippingTool -ErrorAction SilentlyContinue) { Stop-Process -Name SnippingTool -Force }',
-        'if (Get-Process -Name SnipAndSketch -ErrorAction SilentlyContinue) { Stop-Process -Name SnipAndSketch -Force }'
-    ];
+// // ฟังก์ชันเพื่อป้องกันการจับภาพหน้าจอจาก screen logger
+// function preventScreenLogger() {
+//     const commands = [
+//         'if (!(Test-Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System")) { New-Item -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Force }',
+//         'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "DisableSnippingTool" -Value 1',
+//         'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "AppCaptureEnabled" -Value 0',
+//         'Set-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR" -Name "IsGameDVR_Enabled" -Value 0',
+//         'if (Get-Process -Name SnippingTool -ErrorAction SilentlyContinue) { Stop-Process -Name SnippingTool -Force }',
+//         'if (Get-Process -Name SnipAndSketch -ErrorAction SilentlyContinue) { Stop-Process -Name SnipAndSketch -Force }'
+//     ];
 
-    exec(`powershell -Command "${commands.join('; ')}"`, (err) => {
-        if (err) {
-            console.error('Error executing PowerShell commands:', err);
-        } else {
-            console.log('Windows screen capture tools disabled.');
-        }
-    });
-}
+//     exec(`powershell -Command "${commands.join('; ')}"`, (err) => {
+//         if (err) {
+//             console.error('Error executing PowerShell commands:', err);
+//         } else {
+//             console.log('Windows screen capture tools disabled.');
+//         }
+//     });
+// }
 
-// Function to get the current active window
-async function getActiveWindow() {
-    const window = await activeWin();
-    return window;
-}
+// // Function to get the current active window
+// async function getActiveWindow() {
+//     const window = await activeWin();
+//     return window;
+// }
 
-// Function to monitor changes in the active window
-async function monitorActiveWindow() {
-    let previousWindow = await getActiveWindow();
-    setInterval(async () => {
-        const currentWindow = await getActiveWindow();
-        if (previousWindow && currentWindow.id !== previousWindow.id) {
-            console.log('Active window has changed');
-            previousWindow = currentWindow;
-            // Handle events when the active window changes
-            preventScreenLogger();
-        }
-    }, 1000); // Check every 1 second
-}
+// // Function to monitor changes in the active window
+// async function monitorActiveWindow() {
+//     let previousWindow = await getActiveWindow();
+//     setInterval(async () => {
+//         const currentWindow = await getActiveWindow();
+//         if (previousWindow && currentWindow.id !== previousWindow.id) {
+//             console.log('Active window has changed');
+//             previousWindow = currentWindow;
+//             // Handle events when the active window changes
+//             preventScreenLogger();
+//         }
+//     }, 1000); // Check every 1 second
+// }
 
-// เรียกใช้งานฟังก์ชัน 
-detectThirdPartySoftware(); 
-monitorActiveWindow();
+// // เรียกใช้งานฟังก์ชัน 
+// detectThirdPartySoftware(); 
+// monitorActiveWindow();
 
 // ส่งไฟล์ HTML เมื่อเข้าถึง root URL
 app.get("/", (req, res) => {

@@ -8,9 +8,7 @@ let currentLanguage = "english";
 const encryptionKey = "1234567890123456";
 
 // เพิ่ม event listener
-document
-  .querySelectorAll("input, textarea, form")
-  .forEach((element) => {
+document.querySelectorAll("input, textarea, form").forEach((element) => {
     element.addEventListener("focus", (event) => {
       event.stopImmediatePropagation();
       activeInput = element;
@@ -53,7 +51,6 @@ function handleKeyPress(keyElement) {
     if (isShift && !isCapsLock) {
       toggleShift();
     }
-
     // console.log("Encrypted input: ", activeInput.getAttribute("data-encrypted-value"));
   }
 }

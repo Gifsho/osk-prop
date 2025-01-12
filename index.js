@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 const path = require("path");  // สำหรับใช้ path ในการตั้งค่า static files
 const { exec } = require('child_process');
 const activeWin = require('active-win');
+const cors = require('cors');  // เพิ่ม cors เพื่อจัดการ CORS
 const app = express();
 const PORT = 3000;
 
@@ -34,11 +35,13 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
+// ตั้งค่า CORS เพื่ออนุญาตให้เข้าถึงจากทุกโดเมน
 app.use(cors({
-  origin: '*', // หรือ '*' หากต้องการอนุญาตให้ทุกโดเมนเข้าถึง
+  origin: '*',  // หรือ '*' หากต้องการอนุญาตให้ทุกโดเมนเข้าถึง
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 // Login Endpoint
 app.post("/login", async (req, res) => {
   try {

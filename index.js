@@ -34,6 +34,11 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
+app.use(cors({
+  origin: '*', // หรือ '*' หากต้องการอนุญาตให้ทุกโดเมนเข้าถึง
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 // Login Endpoint
 app.post("/login", async (req, res) => {
   try {

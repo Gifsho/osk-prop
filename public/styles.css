@@ -8,6 +8,99 @@ body {
     margin: 0;
 }
 
+.virtual-keyboard {
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    margin-top: 10px;
+    width: fit-content;
+    
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    margin: 5px 0;
+}
+
+.keyboard-key {
+    margin: 2px;
+    padding: 10px 15px;
+    min-width: 30px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    min-width: 50px;
+    max-width: calc(33.33% - 20px);
+}
+
+.keyboard-key:hover {
+    background: #e0e0e0;
+}
+
+.keyboard-key:active {
+    background: #d0d0d0;
+    transform: translateY(1px);
+}
+
+.keyboard-key.space {
+    width: 200px;
+}
+
+#test-input {
+    margin: 20px 0;
+    padding: 10px;
+    width: 300px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.controls {
+    margin-bottom: 20px;
+}
+
+select, button {
+    margin-right: 10px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #f0f0f0;
+}
+
+/* เพิ่มเติมจาก styles.css เดิม */
+
+.keyboard-active {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* สำหรับแสดง visual feedback ว่า input ไหนกำลังถูกใช้งานกับ keyboard */
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+#keyboard {
+    position: absolute;  /* เพิ่มตำแหน่งการวางแบบ absolute */
+    cursor: move;  /* แสดง cursor แบบลาก */
+}
+
+.backspacew {
+    width: 260px;
+}
+
+
 .login-container {
     background: #fff;
     padding: 20px;
@@ -39,108 +132,9 @@ body {
     background-color: #45a049;
 }
 
-.keyboard {
-    display: none;
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 50px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: max-content;
-    cursor: move;
-    z-index: 1000;
-}
-
-.keyboard-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.key {
-    width: 20px;
-    height: 35px;
-    margin: 3px;
-    background: #d3d3d3;
-    text-align: center;
-    line-height: 50px;
-    cursor: pointer;
-    border-radius: 10px;
-    font-size: 15px;
-    transition: all 0.3s ease;
-    user-select: none;
-}
-
-.key:hover {
-    background: #b0b0b0;
-}
-
-.key:active {
-    background: #808080;
-    transform: translateY(2px);
-}
-
-.key.shift-active {
-    background-color: #2c2c2c;
-    color: white;
-}
-
-.key.caps-active {
-    background-color: #2c2c2c;
-    color: white;
-}
-
-.space-bar {
-    width: 450px;
-}
-
-.keyboard-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.shift,
-.backspace,
-.enter,
-.tab {
-    width: 100px;
-}
-
-.capslock {
-    width: 100px;
-}
-
-.kk {
-    height: 100px;
-}
-
-.keyboard-container button {
-    padding: 10px 20px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    margin: 2px;
-    transition: background-color 0.3s ease;
-}
-
-.keyboard-container button:hover {
-    background-color: #e0e0e0;
-}
-
-.keyboard-container button:focus {
-    outline: none;
-}
-
 .keyb {
-    /* background-color: rgb(0, 0, 0); */
     color: white;
     border: black;
-    /* border-radius: 50%; */
     width: 40px;
     height: 25px;
     cursor: pointer;
@@ -148,50 +142,5 @@ body {
     text-align: center;
     line-height: 50px;
     margin: 8px;
-}
-
-/* สไตล์สำหรับ Dropdown */
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-button {
-    background-color: #4CAF50; /* สีปุ่มหลัก */
-    color: white;
-    padding: 10px 20px;
-    font-size: 14px;
-    border: none;
-    cursor: pointer;
-    border-radius: 17px;
-}
-
-.dropdown-content {
-    display: none; /* ซ่อนเมนู */
-    position: absolute;
-    bottom: 100%; /* แสดงด้านบน */
-    left: 0;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-}
-
-.dropdown-content button {
-    background-color: white;
-    color: black;
-    padding: 10px;
-    text-align: left;
-    border: none;
-    width: 100%;
-    cursor: pointer;
-}
-
-.dropdown-content button:hover {
-    background-color: #ddd; /* สีเมื่อวางเมาส์ */
-}
-
-/* แสดง Dropdown เมื่อมีการ Hover */
-.dropdown:hover .dropdown-content {
-    display: block;
+    
 }

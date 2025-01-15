@@ -1,5 +1,5 @@
-<!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Virtual Keyboard</title>
@@ -10,7 +10,7 @@
 
 <body>
     <div class="login-container">
-        <form method="POST">      
+        <form method="POST" id="login-form">
             <h2>LOGINSHP</h2>
 
             <p id="errorMessage" style="color: red; font-size: 13px;"></p>
@@ -27,12 +27,10 @@
     </div>
 
     <div id="keyboard-container"></div>
-    
-    <!-- <script type="module" src="./node_modules/js_lis/main.js"></script> -->
+
+    <!-- <script type="module" src="./js_lis/main.js"></script> -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/js_lis@1.0.17/main.js"></script>
     <script src="login.js"></script>
-    
-
 </body>
 
 </html>
